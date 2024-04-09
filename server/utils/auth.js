@@ -1,3 +1,15 @@
+const jwt = require ('jsonwebtoken');
+const secret = 'mysecretsshhhhh';
+const expiration = '2h';
+
+const { GraphQLError } = require ('graphql')
+
+const createAuthenticationError = () => new GraphQLError('Could not authenticate user.', {
+  extensions: {
+    code: 'UNAUTHENTICATED',
+  },
+});
+
 module.exports = {
   AuthenticationError: new GraphQLError('Could not authenticate user.', {
     extensions: {
@@ -5,6 +17,7 @@ module.exports = {
     },
   }),
   authMiddleware: function ({ req }) {
+    console.log("hello")
     let token = req.body.token || req.query.token || req.headers.authorization;
 
     if (req.headers.authorization) {
@@ -16,10 +29,11 @@ module.exports = {
     }
 
     try {
+      console.log(token)
       const { data } = jwt.verify(token, secret, { maxAge: expiration });
       req.user = data;
-    } catch {
-      console.log('Invalid token');
+    } catch(error) {
+      console.log(error);
     }
 
     return req;

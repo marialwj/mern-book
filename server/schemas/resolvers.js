@@ -20,7 +20,9 @@ const resolvers = {
             return { token, user };
         },
         login: async (parent, { email, password }) => {
+            console.log('login running')
             const user = await User.findOne({ email });
+            console.log(user)
             if (!user) {
                 throw new AuthenticationError('Incorrect credentials');
             }
@@ -29,6 +31,10 @@ const resolvers = {
                 throw new AuthenticationError('Incorrect credentials');
             }
             const token = signToken(user);
+            console.log(token)
+            user.login = {}
+            user.login.token = token;
+            console.log(user)
             return { token, user };
         },
         saveBook: async (parent, { bookData }, context) => {
